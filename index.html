@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>LZT NFT Market — Portals & Rent (2026)</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+  <style>
+    :root {
+      --bg-main: #111214;
+      --bg-card: #191b1f;
+      --bg-input: #131518;
+      --border: #2a2d34;
+      --accent: #22b573;
+      --accent-soft: rgba(34, 181, 115, 0.14);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --gold: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      padding: 12px 12px 96px;
+      line-height: 1.38;
+    }
+
+    /* Приветственный баннер в стиле Lolzteam */
+    .welcome-banner {
+      background:
+        radial-gradient(circle at 85% 20%, rgba(34, 181, 115, 0.28), transparent 55%),
+        linear-gradient(135deg, #1a1d22 0%, #131816 100%);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 16px;
+      padding: 13px 14px;
+      margin-bottom: 10px;
+    }
+
+    .welcome-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .lzt-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .lzt-tag {
+      background: var(--accent);
+      color: #08120d;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .support-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: 9px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .support-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .welcome-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .welcome-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Баланс и гарант */
+    .status-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .stat-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .stat-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .stat-val.neutral {
+      color: var(--text-main);
+      font-size: 11px;
+    }
+
+    /* Фильтры и режим цены */
+    .filter-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: var(--bg-input);
+      padding: 4px;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 7px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: #08120d;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 11px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .select-box {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 9px;
+      color: var(--text-main);
+      font-size: 12px;
+      outline: none;
+    }
+
+    .select-box:focus {
+      border-color: var(--accent);
+    }
+
+    .chips-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chips {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 5px 10px;
+      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #08120d;
+    }
+
+    .reset-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 9px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Сетка */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .nft-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 7px;
+      cursor: pointer;
+      transition: transform 0.14s ease, border-color 0.14s ease;
+    }
+
+    .nft-card:active {
+      transform: scale(0.98);
+      border-color: var(--accent);
+    }
+
+    .nft-preview {
+      height: 108px;
+      border-radius: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lottie-box {
+      width: 82px;
+      height: 82px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lottie-box img {
+      width: 74px;
+      height: 74px;
+      object-fit: contain;
+    }
+
+    .rarity-tag {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 3;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.68);
+      color: var(--gold);
+    }
+
+    .nft-name {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .nft-attrs {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4px;
+      padding-top: 4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .price-main {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .price-ton {
+      font-size: 10px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .btn-deal {
+      width: 100%;
+      background: var(--accent);
+      color: #08120d;
+      border: none;
+      border-radius: 9px;
+      padding: 7px 8px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Модалка */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      display: none;
+      align-items: flex-end;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #17191d;
+      border-top: 2px solid var(--accent);
+      border-radius: 18px 18px 0 0;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-preview-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-lottie {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .close-btn {
+      background: #252830;
+      color: var(--text-main);
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .field-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+      display: block;
+    }
+
+    .field-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 11px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .field-input:focus {
+      border-color: var(--accent);
+    }
+
+    .summary-box {
+      background: #121417;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 9px 11px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .summary-box strong {
+      color: var(--text-main);
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #08120d;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 28px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="welcome-banner">
+    <div class="welcome-top">
+      <div class="lzt-logo">
+        <span class="lzt-tag">LOLZ STYLE</span>
+        <span>NFT & GIFTS • 2026</span>
+      </div>
+      <a class="support-btn" href="https://t.me/Exstazy0707" target="_blank">
+        💬 @Exstazy0707
+      </a>
+    </div>
+    <div class="welcome-title">Маркет подарков и аренда через Гаранта</div>
+    <div class="welcome-sub">
+      Ориентир по Portals • Гарант: YonoRey (8959184107) • Саппорт ID: 8431278428
+    </div>
+  </div>
+
+  <div class="status-strip">
+    <div class="stat-box">
+      <span class="stat-label">Ваш баланс</span>
+      <span class="stat-val" id="balanceDisplay">0.00 ₽</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-label">Гарант / Саппорт</span>
+      <span class="stat-val neutral">8959184107 • @Exstazy0707</span>
+    </div>
+  </div>
+
+  <div class="filter-panel">
+    <!-- Переключатель: Покупка / Аренда (в сутки) -->
+    <div class="mode-switch">
+      <button class="mode-btn" id="modeBuyBtn" data-mode="buy" type="button">💰 Покупка (Portals)</button>
+      <button class="mode-btn active" id="modeRentBtn" data-mode="rent" type="button">⏱ Аренда / сутки</button>
+    </div>
+
+    <input id="searchInput" class="search-input" type="text" placeholder="Поиск по названию, коллекции, фону, модели или паттерну..." />
+
+    <div class="filter-grid">
+      <select id="collectionFilter" class="select-box">
+        <option value="all">Коллекция: Все</option>
+      </select>
+      <select id="backdropFilter" class="select-box">
+        <option value="all">Фон: Любой</option>
+      </select>
+      <select id="modelFilter" class="select-box">
+        <option value="all">Модель: Любая</option>
+      </select>
+      <select id="patternFilter" class="select-box">
+        <option value="all">Паттерн: Любой</option>
+      </select>
+    </div>
+
+    <div class="chips-row">
+      <div class="chips" id="sortChips">
+        <button class="chip active" data-sort="default">Топ</button>
+        <button class="chip" data-sort="asc">Дешевле</button>
+        <button class="chip" data-sort="desc">Дороже</button>
+      </div>
+      <button class="reset-btn" id="resetFiltersBtn" type="button">Сброс</button>
+    </div>
+  </div>
+
+  <div class="grid" id="nftGrid"></div>
+
+  <div class="modal-backdrop" id="dealModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-preview-wrap">
+          <div class="modal-lottie" id="modalLottie"></div>
+          <div>
+            <div class="modal-title" id="modalTitle">Сделка на троих</div>
+            <div class="brand-sub" id="modalAttrs">Фон • Модель • Паттерн</div>
+          </div>
+        </div>
+        <button class="close-btn" id="closeModalBtn">Закрыть</button>
+      </div>
+
+      <div>
+        <label class="field-label">Второй участник (@username или Telegram ID)</label>
+        <input id="counterpartyInput" class="field-input" type="text" placeholder="@username или 123456789" />
+      </div>
+
+      <div>
+        <label class="field-label">Ссылка на подарок / NFT</label>
+        <input id="linkInput" class="field-input" type="text" placeholder="https://t.me/nft/..." />
+      </div>
+
+      <div>
+        <label class="field-label" id="amountLabel">Сумма сделки (₽)</label>
+        <input id="amountInput" class="field-input" type="number" step="0.01" min="1" />
+      </div>
+
+      <div class="summary-box" id="summaryBox">
+        Гарант: <strong>ID 8959184107</strong> • Комиссия (5%): <strong>0.00 ₽</strong> • К выплате: <strong>0.00 ₽</strong>
+      </div>
+
+      <button class="submit-btn" id="submitDealBtn">Отправить заявку Гаранту</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    // Ориентировочный курс TON в рублях (можно менять одной константой)
+    const TON_TO_RUB = 145;
+    // Доля суточной аренды от стоимости актива (например, 4% в сутки от стоимости)
+    const RENT_DAILY_RATE = 0.04;
+    const COMMISSION = 0.05;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userBalance = parseFloat(urlParams.get("balance") || "0") || 0;
+    document.getElementById("balanceDisplay").textContent =
+      `${userBalance.toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽`;
+
+    const BACKDROPS = [
+      { name: "Emerald LZT", css: "radial-gradient(circle at 50% 30%, rgba(34,181,115,0.34), #131618 85%)" },
+      { name: "Obsidian Dark", css: "radial-gradient(circle at 50% 30%, rgba(99,102,241,0.24), #111215 85%)" },
+      { name: "Royal Gold", css: "radial-gradient(circle at 50% 30%, rgba(245,158,11,0.30), #171410 85%)" },
+      { name: "Crimson Neon", css: "radial-gradient(circle at 50% 30%, rgba(239,68,68,0.26), #181214 85%)" },
+      { name: "Cyber Cyan", css: "radial-gradient(circle at 50% 30%, rgba(6,182,212,0.28), #11171a 85%)" }
+    ];
+
+    const MODELS = ["Classic #1", "Gold Edition", "Cyber Core", "Shadow Skin", "Frost Variant"];
+    const PATTERNS = ["Stars Grid", "LZT Wave", "Diamond Mesh", "Skull Dot", "Minimal Clean"];
+
+    // Расширенный каталог коллекций подарков и NFT с реалистичными порядками цен (в TON по рынку 2026)
+    const GIFT_COLLECTIONS = [
+      { slug: "plushpepe", name: "Plush Pepe", collection: "Pepe & Mythic", rarity: "Mythic", ton: 5100 },
+      { slug: "algorithmcup", name: "Algorithm Cup", collection: "Cups & Rare", rarity: "Mythic", ton: 3450 },
+      { slug: "intelligencecup", name: "Intelligence Cup", collection: "Cups & Rare", rarity: "Mythic", ton: 3099 },
+      { slug: "heartlocket", name: "Heart Locket", collection: "Love & Jewels", rarity: "Legendary", ton: 1444 },
+      { slug: "durovscap", name: "Durov's Cap", collection: "Telegram Icons", rarity: "Legendary", ton: 470 },
+      { slug: "scaredcat", name: "Scared Cat", collection: "Halloween & Dark", rarity: "Legendary", ton: 299 },
+      { slug: "preciouspeach", name: "Precious Peach", collection: "Fruits & Gems", rarity: "Epic", ton: 290 },
+      { slug: "durovsglasses", name: "Durov's Glasses", collection: "Telegram Icons", rarity: "Epic", ton: 229 },
+      { slug: "heroichelmet", name: "Heroic Helmet", collection: "Street & Drop", rarity: "Epic", ton: 199 },
+      { slug: "astralshard", name: "Astral Shard", collection: "Space & Crystals", rarity: "Epic", ton: 147 },
+      { slug: "iongem", name: "Ion Gem", collection: "Space & Crystals", rarity: "Epic", ton: 85 },
+      { slug: "artisanbrick", name: "Artisan Brick", collection: "Street & Drop", rarity: "Epic", ton: 85 },
+      { slug: "perfumebottle", name: "Perfume Bottle", collection: "Love & Jewels", rarity: "Rare", ton: 64 },
+      { slug: "lootbag", name: "Loot Bag", collection: "Street & Drop", rarity: "Rare", ton: 58 },
+      { slug: "toybear", name: "Toy Bear", collection: "Plush & Toys", rarity: "Rare", ton: 46 },
+      { slug: "vintagecigar", name: "Vintage Cigar", collection: "Street & Drop", rarity: "Rare", ton: 52 },
+      { slug: "signetring", name: "Signet Ring", collection: "Love & Jewels", rarity: "Rare", ton: 44 },
+      { slug: "magicpotion", name: "Magic Potion", collection: "Halloween & Dark", rarity: "Rare", ton: 41 },
+      { slug: "minioscar", name: "Mini Oscar", collection: "Telegram Icons", rarity: "Rare", ton: 38 },
+      { slug: "swisswatch", name: "Swiss Watch", collection: "Love & Jewels", rarity: "Rare", ton: 49 },
+      { slug: "electricSkull", name: "Electric Skull", collection: "Halloween & Dark", rarity: "Rare", ton: 35 },
+      { slug: "kissedfrog", name: "Kissed Frog", collection: "Pepe & Mythic", rarity: "Rare", ton: 32 },
+      { slug: "genielamp", name: "Genie Lamp", collection: "Space & Crystals", rarity: "Rare", ton: 29 },
+      { slug: "diamondring", name: "Diamond Ring", collection: "Love & Jewels", rarity: "Rare", ton: 68 },
+      { slug: "nekohelmet", name: "Neko Helmet", collection: "Street & Drop", rarity: "Rare", ton: 61 },
+      { slug: "sharpTongue", name: "Sharp Tongue", collection: "Halloween & Dark", rarity: "Uncommon", ton: 24 },
+      { slug: "voodoodoll", name: "Voodoo Doll", collection: "Halloween & Dark", rarity: "Uncommon", ton: 21 },
+      { slug: "madpumpkin", name: "Mad Pumpkin", collection: "Halloween & Dark", rarity: "Uncommon", ton: 19 },
+      { slug: "evileye", name: "Evil Eye", collection: "Space & Crystals", rarity: "Uncommon", ton: 18 },
+      { slug: "trappedheart", name: "Trapped Heart", collection: "Love & Jewels", rarity: "Uncommon", ton: 17 },
+      { slug: "skullflower", name: "Skull Flower", collection: "Halloween & Dark", rarity: "Uncommon", ton: 15 },
+      { slug: "eternalrose", name: "Eternal Rose", collection: "Love & Jewels", rarity: "Uncommon", ton: 16 },
+      { slug: "berrybox", name: "Berry Box", collection: "Fruits & Gems", rarity: "Uncommon", ton: 14 },
+      { slug: "bunnyMuffin", name: "Bunny Muffin", collection: "Plush & Toys", rarity: "Uncommon", ton: 13 },
+      { slug: "crystalball", name: "Crystal Ball", collection: "Space & Crystals", rarity: "Uncommon", ton: 15 },
+      { slug: "lovepotion", name: "Love Potion", collection: "Love & Jewels", rarity: "Uncommon", ton: 14 },
+      { slug: "starnotepad", name: "Star Notepad", collection: "Telegram Icons", rarity: "Common", ton: 11 },
+      { slug: "spicedwine", name: "Spiced Wine", collection: "Fruits & Gems", rarity: "Common", ton: 10 },
+      { slug: "jellybunny", name: "Jelly Bunny", collection: "Plush & Toys", rarity: "Common", ton: 12 },
+      { slug: "witchhat", name: "Witch Hat", collection: "Halloween & Dark", rarity: "Common", ton: 11 },
+      { slug: "santahat", name: "Santa Hat", collection: "Plush & Toys", rarity: "Common", ton: 9 },
+      { slug: "jesterhat", name: "Jester Hat", collection: "Plush & Toys", rarity: "Common", ton: 9 },
+      { slug: "partysparkler", name: "Party Sparkler", collection: "Telegram Icons", rarity: "Common", ton: 8 },
+      { slug: "homemadecake", name: "Homemade Cake", collection: "Fruits & Gems", rarity: "Common", ton: 8 },
+      { slug: "lolpop", name: "Lol Pop", collection: "Fruits & Gems", rarity: "Common", ton: 7 },
+      { slug: "easteregg", name: "Easter Egg", collection: "Fruits & Gems", rarity: "Common", ton: 5 },
+      { slug: "bdaycandle", name: "B-Day Candle", collection: "Telegram Icons", rarity: "Common", ton: 6 },
+      { slug: "jinglebells", name: "Jingle Bells", collection: "Plush & Toys", rarity: "Common", ton: 7 }
+    ];
+
+    const ALL_ITEMS = GIFT_COLLECTIONS.map((g, idx) => {
+      const cleanSlug = g.slug.toLowerCase();
+      const backdrop = BACKDROPS[idx % BACKDROPS.length];
+      const model = MODELS[idx % MODELS.length];
+      const pattern = PATTERNS[idx % PATTERNS.length];
+
+      const buyTon = g.ton;
+      const rentTon = Math.max(0.5, +(buyTon * RENT_DAILY_RATE).toFixed(2));
+
+      return {
+        id: idx + 1,
+        slug: cleanSlug,
+        name: g.name,
+        collection: g.collection,
+        backdrop: backdrop.name,
+        backdropCss: backdrop.css,
+        model,
+        pattern,
+        rarity: g.rarity,
+        buyTon,
+        rentTon,
+        buyRub: Math.round(buyTon * TON_TO_RUB),
+        rentRub: Math.max(50, Math.round(rentTon * TON_TO_RUB)),
+        lottieUrl: `https://nft.fragment.com/gift/${cleanSlug}-1.lottie.json`,
+        fallbackImg: `https://nft.fragment.com/gift/${cleanSlug}-1.medium.jpg`
+      };
+    });
+
+    function populateFilters() {
+      const colSelect = document.getElementById("collectionFilter");
+      const bgSelect = document.getElementById("backdropFilter");
+      const modSelect = document.getElementById("modelFilter");
+      const patSelect = document.getElementById("patternFilter");
+
+      [...new Set(ALL_ITEMS.map(x => x.collection))].forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = `Коллекция: ${c}`;
+        colSelect.appendChild(opt);
+      });
+
+      BACKDROPS.forEach(b => {
+        const opt = document.createElement("option");
+        opt.value = b.name;
+        opt.textContent = `Фон: ${b.name}`;
+        bgSelect.appendChild(opt);
+      });
+
+      MODELS.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = `Модель: ${m}`;
+        modSelect.appendChild(opt);
+      });
+
+      PATTERNS.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = `Паттерн: ${p}`;
+        patSelect.appendChild(opt);
+      });
+    }
+
+    let filters = {
+      mode: "rent", // "rent" или "buy"
+      search: "",
+      collection: "all",
+      backdrop: "all",
+      model: "all",
+      pattern: "all",
+      sort: "default"
+    };
+    let selectedItem = null;
+    const activeAnimations = new Map();
+
+    const gridEl = document.getElementById("nftGrid");
+    const modalEl = document.getElementById("dealModal");
+    const counterpartyEl = document.getElementById("counterpartyInput");
+    const linkEl = document.getElementById("linkInput");
+    const amountEl = document.getElementById("amountInput");
+    const summaryEl = document.getElementById("summaryBox");
+
+    function getItemPriceRub(item) {
+      return filters.mode === "rent" ? item.rentRub : item.buyRub;
+    }
+
+    function getItemPriceTon(item) {
+      return filters.mode === "rent" ? item.rentTon : item.buyTon;
+    }
+
+    function destroyAllAnimations() {
+      activeAnimations.forEach(anim => {
+        try { anim.destroy(); } catch (_) {}
+      });
+      activeAnimations.clear();
+    }
+
+    function mountLottie(container, item, autoplay = true) {
+      container.innerHTML = "";
+      if (!window.lottie) {
+        container.innerHTML = `<img src="${item.fallbackImg}" alt="${item.name}" loading="lazy" />`;
+        return null;
+      }
+      const anim = window.lottie.loadAnimation({
+        container,
+        renderer: "svg",
+        loop: true,
+        autoplay,
+        path: item.lottieUrl
+      });
+      anim.addEventListener("data_failed", () => {
+        try { anim.destroy(); } catch (_) {}
+        container.innerHTML = `<img src="${item.fallbackImg}" alt="${item.name}" loading="lazy" />`;
+      });
+      return anim;
+    }
+
+    const visibilityObserver = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          const id = Number(entry.target.dataset.id);
+          const anim = activeAnimations.get(id);
+          if (!anim) return;
+          if (entry.isIntersecting) anim.play();
+          else anim.pause();
+        });
+      },
+      { rootMargin: "120px" }
+    );
+
+    function updateSummary() {
+      const amt = parseFloat(amountEl.value) || 0;
+      const comm = amt * COMMISSION;
+      const payout = Math.max(0, amt - comm);
+      const modeText = filters.mode === "rent" ? "Аренда / сут" : "Покупка";
+      summaryEl.innerHTML =
+        `${modeText} • Гарант: <strong>8959184107</strong> • Комиссия (5%): <strong>${comm.toFixed(2)} ₽</strong> • К выплате: <strong>${payout.toFixed(2)} ₽</strong>`;
+    }
+
+    function renderGrid() {
+      destroyAllAnimations();
+
+      let list = ALL_ITEMS.filter(item => {
+        if (filters.collection !== "all" && item.collection !== filters.collection) return false;
+        if (filters.backdrop !== "all" && item.backdrop !== filters.backdrop) return false;
+        if (filters.model !== "all" && item.model !== filters.model) return false;
+        if (filters.pattern !== "all" && item.pattern !== filters.pattern) return false;
+        if (filters.search) {
+          const hay = `${item.name} ${item.collection} ${item.backdrop} ${item.model} ${item.pattern} ${item.rarity}`.toLowerCase();
+          if (!hay.includes(filters.search)) return false;
+        }
+        return true;
+      });
+
+      if (filters.sort === "asc") list = [...list].sort((a, b) => getItemPriceRub(a) - getItemPriceRub(b));
+      else if (filters.sort === "desc") list = [...list].sort((a, b) => getItemPriceRub(b) - getItemPriceRub(a));
+
+      if (!list.length) {
+        gridEl.innerHTML = `<div class="empty-state">Ничего не найдено по фильтрам. Нажми «Сброс».</div>`;
+        return;
+      }
+
+      const suffix = filters.mode === "rent" ? " ₽/сут" : " ₽";
+      const btnText = filters.mode === "rent" ? "Аренда через Гаранта" : "Купить через Гаранта";
+
+      gridEl.innerHTML = list.map(item => {
+        const priceRub = getItemPriceRub(item);
+        const priceTon = getItemPriceTon(item);
+        return `
+          <div class="nft-card" data-id="${item.id}">
+            <div class="nft-preview" style="background: ${item.backdropCss};">
+              <span class="rarity-tag">${item.rarity}</span>
+              <div class="lottie-box" id="lottie-${item.id}"></div>
+            </div>
+            <div>
+              <div class="nft-name">${item.name}</div>
+              <div class="nft-attrs">${item.collection} • ${item.model}<br/>Фон: ${item.backdrop} • ${item.pattern}</div>
+            </div>
+            <div class="price-row">
+              <span class="price-main">${priceRub.toLocaleString("ru-RU")}${suffix}</span>
+              <span class="price-ton">~${priceTon} TON</span>
+            </div>
+            <button class="btn-deal" type="button">${btnText}</button>
+          </div>
+        `;
+      }).join("");
+
+      list.forEach(item => {
+        const box = document.getElementById(`lottie-${item.id}`);
+        if (box) {
+          const anim = mountLottie(box, item, false);
+          if (anim) activeAnimations.set(item.id, anim);
+        }
+      });
+
+      document.querySelectorAll(".nft-card").forEach(card => {
+        visibilityObserver.observe(card);
+        card.addEventListener("click", () => {
+          const id = Number(card.dataset.id);
+          selectedItem = ALL_ITEMS.find(x => x.id === id) || null;
+          if (!selectedItem) return;
+
+          document.getElementById("modalTitle").textContent = selectedItem.name;
+          document.getElementById("modalAttrs").textContent =
+            `${selectedItem.collection} • ${selectedItem.model} • ${selectedItem.backdrop} • ${selectedItem.pattern}`;
+
+          const modalLottieEl = document.getElementById("modalLottie");
+          modalLottieEl.style.background = selectedItem.backdropCss;
+          mountLottie(modalLottieEl, selectedItem, true);
+
+          document.getElementById("amountLabel").textContent =
+            filters.mode === "rent" ? "Сумма аренды за сутки (₽)" : "Сумма покупки (₽, ориентир Portals)";
+
+          counterpartyEl.value = "";
+          linkEl.value = `https://t.me/nft/${selectedItem.name.replace(/[^a-zA-Z0-9]/g, "")}-1`;
+          amountEl.value = getItemPriceRub(selectedItem);
+          updateSummary();
+          modalEl.classList.add("open");
+        });
+      });
+    }
+
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        filters.mode = btn.dataset.mode;
+        renderGrid();
+      });
+    });
+
+    document.getElementById("searchInput").addEventListener("input", e => {
+      filters.search = e.target.value.trim().toLowerCase();
+      renderGrid();
+    });
+
+    document.getElementById("collectionFilter").addEventListener("change", e => {
+      filters.collection = e.target.value;
+      renderGrid();
+    });
+
+    document.getElementById("backdropFilter").addEventListener("change", e => {
+      filters.backdrop = e.target.value;
+      renderGrid();
+    });
+
+    document.getElementById("modelFilter").addEventListener("change", e => {
+      filters.model = e.target.value;
+      renderGrid();
+    });
+
+    document.getElementById("patternFilter").addEventListener("change", e => {
+      filters.pattern = e.target.value;
+      renderGrid();
+    });
+
+    document.querySelectorAll("#sortChips .chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#sortChips .chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        filters.sort = btn.dataset.sort;
+        renderGrid();
+      });
+    });
+
+    document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+      filters = {
+        mode: filters.mode,
+        search: "",
+        collection: "all",
+        backdrop: "all",
+        model: "all",
+        pattern: "all",
+        sort: "default"
+      };
+      document.getElementById("searchInput").value = "";
+      document.getElementById("collectionFilter").value = "all";
+      document.getElementById("backdropFilter").value = "all";
+      document.getElementById("modelFilter").value = "all";
+      document.getElementById("patternFilter").value = "all";
+      document.querySelectorAll("#sortChips .chip").forEach((b, i) => b.classList.toggle("active", i === 0));
+      renderGrid();
+    });
+
+    amountEl.addEventListener("input", updateSummary);
+
+    document.getElementById("closeModalBtn").addEventListener("click", () => {
+      modalEl.classList.remove("open");
+    });
+
+    modalEl.addEventListener("click", e => {
+      if (e.target === modalEl) modalEl.classList.remove("open");
+    });
+
+    document.getElementById("submitDealBtn").addEventListener("click", () => {
+      const counterparty = counterpartyEl.value.trim();
+      const nftLink = linkEl.value.trim();
+      const amount = parseFloat(amountEl.value);
+
+      if (!counterparty || !nftLink || !amount || amount <= 0) {
+        if (tg?.showAlert) tg.showAlert("Заполни второго участника, ссылку на подарок/NFT и сумму.");
+        else alert("Заполни все поля.");
+        return;
+      }
+
+      const payload = {
+        action: "trio_guarantor_deal",
+        deal_mode: filters.mode,
+        guarantor_id: 8959184107,
+        support_username: "Exstazy0707",
+        support_id: 8431278428,
+        nft_name: selectedItem?.name || "NFT",
+        collection: selectedItem?.collection || "",
+        backdrop: selectedItem?.backdrop || "",
+        model: selectedItem?.model || "",
+        pattern: selectedItem?.pattern || "",
+        counterparty,
+        nft_link: nftLink,
+        amount
+      };
+
+      if (tg?.sendData) {
+        tg.sendData(JSON.stringify(payload));
+      } else {
+        alert("Заявка сформирована: " + JSON.stringify(payload));
+      }
+    });
+
+    populateFilters();
+    renderGrid();
+  </script>
+</body>
+</html>
